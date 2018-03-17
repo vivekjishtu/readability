@@ -15,7 +15,7 @@ function main() {
   };
   var article = new Readability(uri, document).parse();  
   
-  var ifr = document.createElement("iframe");
+  var ifr = document.createElement("div");
   document.body.appendChild(ifr);
   ifr.style.position = "fixed";
   ifr.style.top = "0px";
@@ -23,6 +23,6 @@ function main() {
   ifr.style.bottom = "0px";
   ifr.style.right = "0px";
   ifr.style.border = "0px";
-  
+  ifr.style.backgroundColor = "black";
   
 }
