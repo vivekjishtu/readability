@@ -16,7 +16,7 @@ function main() {
   var article = new Readability(uri, document).parse();  
   
   var ifr = document.createElement("div");
-  document.getElementsByTagName("html")[0].appendChild(ifr);
+  document.body.appendChild(ifr);
   ifr.style.position = "fixed";
   ifr.style.top = "0px";
   ifr.style.left = "0px";
@@ -26,6 +26,6 @@ function main() {
   ifr.style.backgroundColor = "black";
   ifr.style.zIndex = 11111;  
   
-  var bdStyle = document.body.style;
+  var bdStyle = getElementsByTagName("html")[0].style;
   bdStyle.overflow = "none";
 }
