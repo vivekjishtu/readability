@@ -14,9 +14,10 @@ function main() {
     pathBase: loc.protocol + "//" + loc.host + loc.pathname.substr(0, loc.pathname.lastIndexOf("/") + 1)
   };
   var article = new Readability(uri, document).parse();  
-  
+  var html = getElementsByTagName("html")[0];
+  if(!html) html = docment.body;
   var ifr = document.createElement("div");
-  document.body.appendChild(ifr);
+  html.appendChild(ifr);
   ifr.style.position = "fixed";
   ifr.style.top = "0px";
   ifr.style.left = "0px";
@@ -26,6 +27,6 @@ function main() {
   ifr.style.backgroundColor = "black";
   ifr.style.zIndex = 9999999999;  
   
-  var bdStyle = getElementsByTagName("html")[0].style;
+  var bdStyle = html.style;
   bdStyle.overflow = "hidden";
 }
