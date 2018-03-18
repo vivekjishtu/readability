@@ -25,4 +25,7 @@ function main() {
   ifr.style.border = "0px";
   ifr.style.backgroundColor = "black";
   ifr.style.zIndex = 11111;  
+  
+  var bdStyle = document.body.style;
+  bdStyle.overflow = "none";
 }
