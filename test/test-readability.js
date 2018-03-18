@@ -58,7 +58,9 @@ function runTestsWithItems(label, domGenerationFn, uri, source, expectedContent,
     before(function() {
       try {
         var doc = domGenerationFn(source);
-        var myReader = new Readability(uri, doc);
+        // Provide one class name to preserve, which we know appears in a few
+        // of the test documents.
+        var myReader = new Readability(uri, doc, { classesToPreserve: ["caption"] });
         // Needs querySelectorAll function to test isProbablyReaderable method.
         // jsdom implements querySelector but JSDOMParser doesn't.
         var readerable = label === "jsdom" ? myReader.isProbablyReaderable() : null;
@@ -108,6 +110,12 @@ function runTestsWithItems(label, domGenerationFn, uri, source, expectedContent,
         return genPath(node) + "(in: ``" + node.parentNode.innerHTML + "``)";
       }
 
+      function attributesForNode(node) {
+        return Array.from(node.attributes).map(function(attr) {
+          return attr.name + "=" + attr.value;
+        }).join(",");
+      }
+
       var actualDOM = domGenerationFn(result.content);
       var expectedDOM = domGenerationFn(expectedContent);
       traverseDOM(function(actualNode, expectedNode) {
@@ -129,7 +137,10 @@ function runTestsWithItems(label, domGenerationFn, uri, source, expectedContent,
             }
           // Compare attributes for element nodes:
           } else if (actualNode.nodeType == 1) {
-            expect(actualNode.attributes.length).eql(expectedNode.attributes.length);
+            var actualNodeDesc = attributesForNode(actualNode);
+            var expectedNodeDesc = attributesForNode(expectedNode);
+            var desc = "node " + nodeStr(actualNode) + " attributes (" + actualNodeDesc + ") should match (" + expectedNodeDesc + ") ";
+            expect(actualNode.attributes.length, desc).eql(expectedNode.attributes.length);
             for (var i = 0; i < actualNode.attributes.length; i++) {
               var attr = actualNode.attributes[i].name;
               var actualValue = actualNode.getAttribute(attr);
@@ -189,11 +200,6 @@ describe("Readability API", function() {
       expect(new Readability({}, {}, {nbTopCandidates: 42})._nbTopCandidates).eql(42);
     });
 
-    it("should accept a maxPages option", function() {
-      expect(new Readability({}, {})._maxPages).eql(5);
-      expect(new Readability({}, {}, {maxPages: 42})._maxPages).eql(42);
-    });
-
     it("should accept a maxElemsToParse option", function() {
       expect(new Readability({}, {})._maxElemsToParse).eql(0);
       expect(new Readability({}, {}, {maxElemsToParse: 42})._maxElemsToParse).eql(42);
@@ -223,6 +229,7 @@ describe("Test pages", function() {
 
       runTestsWithItems("jsdom", function(source) {
         var doc = jsdom(source, {
+          url: uri.spec,
           features: {
             FetchExternalResources: false,
             ProcessExternalResources: false
@@ -234,7 +241,7 @@ describe("Test pages", function() {
 
       runTestsWithItems("JSDOMParser", function(source) {
         var parser = new JSDOMParser();
-        var doc = parser.parse(source);
+        var doc = parser.parse(source, uri.spec);
         if (parser.errorState) {
           console.error("Parsing this DOM caused errors:", parser.errorState);
           return null;
