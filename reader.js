@@ -14,7 +14,7 @@ function main() {
     pathBase: loc.protocol + "//" + loc.host + loc.pathname.substr(0, loc.pathname.lastIndexOf("/") + 1)
   };
   var article = new Readability(uri, document).parse();  
-  var html = getElementsByTagName("html")[0];
+  var html = document.getElementsByTagName("html")[0];
   if(!html) html = docment.body;
   var ifr = document.createElement("div");
   html.appendChild(ifr);
