@@ -26,6 +26,7 @@ function main() {
   ifr.style.border = "0px";
   ifr.style.backgroundColor = "black";
   ifr.style.zIndex = 9999999999;  
+  ifr.id = "readibility_reader_js";
   
   var bdStyle = html.style;
   bdStyle.overflow = "hidden";
